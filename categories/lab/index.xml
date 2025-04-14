@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lab on xzxg001</title><link>https://xzxg001.github.io/categories/lab/</link><description>Recent content in Lab on xzxg001</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 12 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://xzxg001.github.io/categories/lab/index.xml" rel="self" type="application/rss+xml"/><item><title>Network Socket lab</title><link>https://xzxg001.github.io/p/network/</link><pubDate>Sat, 12 Apr 2025 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/p/network/</guid><description>&lt;img src="https://xzxg001.github.io/p/network/image.png" alt="Featured image of post Network Socket lab" />&lt;h1 id="网络基础编程实验python3">&lt;a href="#%e7%bd%91%e7%bb%9c%e5%9f%ba%e7%a1%80%e7%bc%96%e7%a8%8b%e5%ae%9e%e9%aa%8cpython3" class="header-anchor">&lt;/a>网络基础编程实验(Python3)
+&lt;/h1>&lt;h2 id="一实验目的">&lt;a href="#%e4%b8%80%e5%ae%9e%e9%aa%8c%e7%9b%ae%e7%9a%84" class="header-anchor">&lt;/a>一、实验目的：
+&lt;/h2>&lt;p>　　通过本实验，学习采用Socket（套接字）设计简单的网络数据收发程序，理解应用数据包是如何通过传输层进行传送的。&lt;/p>
+&lt;h2 id="二实验内容">&lt;a href="#%e4%ba%8c%e5%ae%9e%e9%aa%8c%e5%86%85%e5%ae%b9" class="header-anchor">&lt;/a>二、实验内容：
+&lt;/h2>&lt;p>​ Socket（套接字）是一种抽象层，应用程序通过它来发送和接收数据，就像应用程序打开一个文件句柄，将数据读写到稳定的存储器上一样。一个socket允许应用程序添加到网络中，并与处于同一个网络中的其他应用程序进行通信。一台计算机上的应用程序向socket写入的信息能够被另一台计算机上的另一个应用程序读取，反之亦然。&lt;/p>
+&lt;p>​ 不同类型的socket与不同类型的底层协议族以及同一协议族中的不同协议栈相关联。现在TCP/IP协议族中的主要socket类型为流套接字（stream sockets）和数据报套接字（datagram sockets）。流套接字将TCP作为其端对端协议（底层使用IP协议），提供了一个可信赖的字节流服务。一个TCP/IP流套接字代表了TCP连接的一端。数据报套接字使用UDP协议（底层同样使用IP协议），提供了一个&amp;quot;尽力而为&amp;quot;（best-effort）的数据报服务，应用程序可以通过它发送最长65500字节的个人信息。一个TCP/IP套接字由一个互联网地址，一个端对端协议（TCP或UDP协议）以及一个端口号唯一确定。&lt;/p>
+&lt;h3 id="21采用tcp进行数据发送的简单程序python">&lt;a href="#21%e9%87%87%e7%94%a8tcp%e8%bf%9b%e8%a1%8c%e6%95%b0%e6%8d%ae%e5%8f%91%e9%80%81%e7%9a%84%e7%ae%80%e5%8d%95%e7%a8%8b%e5%ba%8fpython" class="header-anchor">&lt;/a>2.1、采用TCP进行数据发送的简单程序（python）
+&lt;/h3>&lt;p>TCP协议，传输控制协议（TCP）是一种面向连接的、可靠的、基于字节流的传输层通信协议。&lt;/p>
+&lt;p>TCP通信需要经过创建连接、数据传送、终止连接三个步骤。&lt;/p>
+&lt;p>TCP通信模型中，在通信开始之前，一定要先建立相关的链接，才能发送数据，类似于生活中打电话。&lt;/p>
+&lt;h4 id="1客户端">&lt;a href="#1%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-anchor">&lt;/a>1.客户端
+&lt;/h4>&lt;p>创建客户端的步骤如下：&lt;/p>
+&lt;p>（1）导入socket模块&lt;/p>
+&lt;p>（2）创建TCP套接字&lt;/p>
+&lt;p>（3）建立连接(根据ip和port与服务端)&lt;/p>
+&lt;p>（4）发数据&lt;/p>
+&lt;p>（5）接收服务器响应&lt;/p>
+&lt;p>（6）关闭套接字&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="ch">#!/usr/bin/env python&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># -*- coding:utf-8 -*-&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 设置要连接的服务器IP地址和端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 127.0.0.1 是本机地址，9999是端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9999&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建socket对象，使用默认的TCP协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 连接服务器&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">connect&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 向服务器发送数据，需要先编码&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sendall&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;请求占领地球&amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 接收服务器的响应数据，最大接收1024字节&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">server_reply&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 解码并打印服务器的响应&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">server_reply&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 关闭连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="2服务端">&lt;a href="#2%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-anchor">&lt;/a>2.服务端
+&lt;/h4>&lt;p>创建服务端的步骤如下：&lt;/p>
+&lt;p>（1）导入socket模块&lt;/p>
+&lt;p>（2）创建TCP套接字&lt;/p>
+&lt;p>（3）绑定ip和port&lt;/p>
+&lt;p>（4）设置为被动监听模式，最大并发接收的数量是5(设置监听模式才能是服务器)&lt;/p>
+&lt;p>（5）等待接收连接请求，接收到的是一个元组 （客户端的socket对象，客户端地址)&lt;/p>
+&lt;p>（6）接收并打印客户端发送的数据，并向客户端发送响应数据&lt;/p>
+&lt;p>（7）关闭套接字&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="ch">#!/usr/bin/env python&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># -*- coding:utf-8 -*-&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 设置服务器IP地址和端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 127.0.0.1 是本机地址(回环地址)，9999是端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9999&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建socket对象，使用默认的TCP协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 绑定IP地址和端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 开始监听，参数5表示允许最大连接数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">listen&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 服务器无限循环，持续等待客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;server waiting...&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印等待信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># accept()会等待并返回一个客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># conn是新的套接字对象，addr是连接客户端的地址&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">accept&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接收客户端发送的数据，最大接收1024字节&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">client_data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 解码并打印客户端发送的数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">client_data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 向客户端发送响应数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sendall&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;不要回答,不要回答,不要回答&amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 关闭当前连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="3运行结果">&lt;a href="#3%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c" class="header-anchor">&lt;/a>3.运行结果
+&lt;/h4>&lt;p>1.服务器处于循环等待中&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/TCP1.png"
+loading="lazy"
+alt="TCP1"
+>&lt;/p>
+&lt;p>2.客户端向服务器发送&lt;code>请求占领地球&lt;/code>,服务器收到消息后打印出数据内容&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/TCP2.png"
+loading="lazy"
+alt="TCP2"
+>&lt;/p>
+&lt;p>3.客户端收到来自服务器端的响应&lt;code>不要回答&lt;/code>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/TCP3.png"
+loading="lazy"
+alt="TCP3"
+>&lt;/p>
+&lt;p>4.服务器继续循环等待&lt;/p>
+&lt;h3 id="22采用udp进行数据发送的简单程序python">&lt;a href="#22%e9%87%87%e7%94%a8udp%e8%bf%9b%e8%a1%8c%e6%95%b0%e6%8d%ae%e5%8f%91%e9%80%81%e7%9a%84%e7%ae%80%e5%8d%95%e7%a8%8b%e5%ba%8fpython" class="header-anchor">&lt;/a>2.2、采用UDP进行数据发送的简单程序（python）
+&lt;/h3>&lt;p>​ UDP——用户数据报协议，是一个无连接的简单的面向数据报的运输层协议。UDP不提供可靠性，它只是把应用程序传给IP层的数据报发送出去，但是并不能保证它们能到达目的地。由于UDP在传输数据报前不用在客户和服务器之间建立一个连接，且没有超时重发等机制，故而传输速度很快。它不属于连接型协议，因而具有资源消耗小，处理速度快的优点，所以通常音频、视频和普通数据在传送时使用UDP较多，因为它们即使偶尔丢失一两个数据包，也不会对接收结果产生太大影响。&lt;/p>
+&lt;h4 id="1客户端-1">&lt;a href="#1%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-anchor">&lt;/a>1.客户端
+&lt;/h4>&lt;p>创建客户端的步骤如下：&lt;/p>
+&lt;p>（1）导入socket模块&lt;/p>
+&lt;p>（2）创建UDP套接字&lt;/p>
+&lt;p>（3）客户端根据ip和port循环向服务端发送请求&lt;/p>
+&lt;p>（4）关闭套接字&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="ch">#!/usr/bin/env python&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># -*- coding:utf-8 -*-&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 设置目标服务器的IP地址和端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 127.0.0.1 是本机地址，9999是端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9999&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建UDP socket对象&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># AF_INET 表示使用IPv4协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># SOCK_DGRAM 表示使用UDP协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 0 表示使用默认协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_DGRAM&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 客户端循环发送数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 获取用户输入的数据并去除两端空白&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">inp&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">input&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;数据：&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">strip&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 如果输入&amp;#39;exit&amp;#39;则退出循环&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">inp&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;exit&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 将数据编码并发送到服务器&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># sendto()方法需要指定目标地址&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sendto&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">inp&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 关闭socket连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="2服务端-1">&lt;a href="#2%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-anchor">&lt;/a>2.服务端
+&lt;/h4>&lt;p>创建服务端的步骤如下：
+（1）导入socket模块&lt;/p>
+&lt;p>（2）创建UDP套接字&lt;/p>
+&lt;p>（3）套接字绑定服务端ip和port&lt;/p>
+&lt;p>（4）服务端循环接收来自客户端的请求，解码并打印出接收到的数据&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="ch">#!/usr/bin/env python&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># -*- coding:utf-8 -*-&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 设置服务器IP地址和端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 127.0.0.1 是本机地址(回环地址)，9999是端口号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9999&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建UDP socket对象&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># AF_INET 表示使用IPv4协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># SOCK_DGRAM 表示使用UDP协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 0 表示使用默认协议&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_DGRAM&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 绑定服务器地址和端口&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 服务器无限循环，持续接收数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接收UDP数据，最大接收1024字节&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># UDP不需要建立连接，直接接收数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 解码并打印接收到的数据&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="3运行结果-1">&lt;a href="#3%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c-1" class="header-anchor">&lt;/a>3.运行结果
+&lt;/h4>&lt;p>（1）服务端处于无限循环&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/UDP1.png"
+loading="lazy"
+alt="UDP1"
+>&lt;/p>
+&lt;p>（2）客户端向服务端发送数据，&lt;code>hi,zlz&lt;/code>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/UDP2.png"
+loading="lazy"
+alt="UDP2"
+>&lt;/p>
+&lt;p>（3）服务端接收到客户端发送的数据&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/UDP3.png"
+loading="lazy"
+alt="UDP3"
+>&lt;/p>
+&lt;h3 id="23tcp与udp使用套接字的异同">&lt;a href="#23tcp%e4%b8%8eudp%e4%bd%bf%e7%94%a8%e5%a5%97%e6%8e%a5%e5%ad%97%e7%9a%84%e5%bc%82%e5%90%8c" class="header-anchor">&lt;/a>2.3、TCP与UDP使用套接字的异同
+&lt;/h3>&lt;h4 id="1创建套接字">&lt;a href="#1%e5%88%9b%e5%bb%ba%e5%a5%97%e6%8e%a5%e5%ad%97" class="header-anchor">&lt;/a>1.创建套接字
+&lt;/h4>&lt;p>参数1：family（给定的套接族）一般有两种重要参数&lt;/p>
+&lt;p>socket.AF_INET（用于服务器与服务器之间的网络通信）&lt;/p>
+&lt;p>socket.AF_INET6 （基于IPV6方式的服务器与服务器之间的网络通信）&lt;/p>
+&lt;p>参数2：type（套接字类型），也是一般两个类型&lt;/p>
+&lt;p>&lt;strong>socket.SOCK_STREAM&lt;/strong>（基于TCP的流式socket通信）&lt;/p>
+&lt;p>&lt;strong>socket.SOCK_DGRAM&lt;/strong>（基于UDP的数据报式socket通信）&lt;/p>
+&lt;h4 id="2发送数据">&lt;a href="#2%e5%8f%91%e9%80%81%e6%95%b0%e6%8d%ae" class="header-anchor">&lt;/a>2.发送数据
+&lt;/h4>&lt;p>UDP发送数据使用的函数为sendto，其格式为：&lt;/p>
+&lt;p>参数1：表示发送数据的内容&lt;/p>
+&lt;p>参数2：表示编码格式&lt;/p>
+&lt;p>参数3：表示目的地ip&lt;/p>
+&lt;p>参数4：表示目的地端口&lt;/p>
+&lt;h4 id="3建立连接">&lt;a href="#3%e5%bb%ba%e7%ab%8b%e8%bf%9e%e6%8e%a5" class="header-anchor">&lt;/a>3.建立连接
+&lt;/h4>&lt;p>UDP的服务端中不需要设置监听模式，也不需要建立连接，TCP需要不断监听，事先建立连接。&lt;/p>
+&lt;p>其余数据传输内容，与基于TCP的传输一致。&lt;/p>
+&lt;h3 id="24多线程线程池对比">&lt;a href="#24%e5%a4%9a%e7%ba%bf%e7%a8%8b%e7%ba%bf%e7%a8%8b%e6%b1%a0%e5%af%b9%e6%af%94" class="header-anchor">&lt;/a>2.4、多线程\线程池对比
+&lt;/h3>&lt;p>​ 当一个客户端向一个已经被其他客户端占用的服务器发送连接请求时，虽然其在连接建立后即可向服务器端发送数据，服务器端在处理完已有客户端的请求前，却不会对新的客户端作出响应。&lt;/p>
+&lt;p>​ 并行服务器：可以单独处理每一个连接，且不会产生干扰。并行服务器分为两种：一客户一线程和线程池。&lt;/p>
+&lt;p>​ 每个新线程都会消耗系统资源：创建一个线程将占用CPU周期，而且每个线程都自己的数据结构（如，栈）也要消耗系统内存。另外，当一个线程阻塞（block）时，将保存其状态，选择另外一个线程运行，并在上下文转换（context switch）时恢复阻塞线程的状态。随着线程数的增加，线程将消耗越来越多的系统资源。这将最终导致系统花费更多的时间来处理上下文转换和线程管理，更少的时间来对连接进行服务。那种情况下，加入一个额外的线程实际上可能增加客户端总服务时间。&lt;/p>
+&lt;p>​ 我们可以通过限制总线程数并重复使用线程来避免这个问题。与为每个连接创建一个新的线程不同，服务器在启动时创建一个由固定数量线程组成的线程池（thread pool）。当一个新的客户端连接请求传入服务器，它将交给线程池中的一个线程处理。当该线程处理完这个客户端后，又返回线程池，并为下一次请求处理做好准备。如果连接请求到达服务器时，线程池中的所有线程都已经被占用，它们则在一个队列中等待，直到有空闲的线程可用。&lt;/p>
+&lt;h4 id="1多线程">&lt;a href="#1%e5%a4%9a%e7%ba%bf%e7%a8%8b" class="header-anchor">&lt;/a>（1）多线程
+&lt;/h4>&lt;p>​ 与单线程不同之处在于每次建立起一个新的连接时，就使用threading模块创建一个新的线程，向新的线程中传入该客户端套接字的信息，并保持通信，同时该线程需要通过thread.setDaemon(True)设置为守护主线程。&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/thread1.png"
+loading="lazy"
+alt="thread1"
+>&lt;/p>
+&lt;h5 id="客户端">&lt;a href="#%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-anchor">&lt;/a>客户端
+&lt;/h5>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">threading&lt;/span> &lt;span class="c1"># 导入threading模块，用于多线程编程&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 定义服务器的IP地址和端口&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9998&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 定义客户端的工作函数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">work&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 创建一个TCP套接字&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_STREAM&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 连接到服务器&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">connect&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">message&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;拔尖班&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;号签到&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">send&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">message&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;客户端&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;发送签到请求成功&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;客户端&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;成功签到，接收消息:&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">data&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 关闭套接字连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;客户端&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;断开连接成功&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建20个线程，模拟20个客户端同时签到&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="nb">range&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 创建一个线程，目标函数是work，参数是i&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">thread&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">threading&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">work&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">args&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">,))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 启动线程&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">thread&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">start&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>​ 客户端的实现基于多线程。work为线程的工作函数，其核心功能为创建客户端套接字，使该套接字与服务器建立TCP连接，向服务器的套接字发送数据，接受服务端套接字传输的数据。客户端基于多线程实现数据发送可以有效地模拟真实生产环境下，不同PC主机向服务器发送数据的状态，从而对多线程的工作效果加以分析。&lt;/p>
+&lt;h5 id="服务端">&lt;a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-anchor">&lt;/a>服务端
+&lt;/h5>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span> &lt;span class="c1"># 导入socket模块，用于网络通信&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">threading&lt;/span> &lt;span class="c1"># 导入threading模块，用于多线程编程&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 定义服务器的IP地址和端口&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9998&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 定义处理客户端请求的函数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">work&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接收客户端发送的消息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># 从客户端接收最多1024字节的数据，并解码为字符串&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器接收来自:&lt;/span>&lt;span class="se">\t&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;的信息,内容为:&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">data&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">send&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;你已签到&amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span> &lt;span class="c1"># 发送&amp;#34;你已签到&amp;#34;消息到客户端&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器向&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;回复消息&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器与客户端:&lt;/span>&lt;span class="se">\t&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;的连接关闭&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="vm">__name__&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;__main__&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_STREAM&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 绑定服务器的IP地址和端口&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 开始监听客户端连接，最多允许5个客户端排队&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">listen&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;server waiting...&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印服务器等待连接的状态&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 服务器主循环，持续等待客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接受客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">accept&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># 阻塞等待，直到有客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s1">&amp;#39;客户端:&lt;/span>&lt;span class="se">\t\t&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s1">连接成功&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印客户端连接成功的消息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">thread&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">threading&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">work&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">args&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">daemon&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 启动线程&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">thread&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">start&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h5 id="运行结果">&lt;a href="#%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c" class="header-anchor">&lt;/a>运行结果
+&lt;/h5>&lt;ul>
+&lt;li>客户端：&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/thread2.png"
+loading="lazy"
+alt="thread2"
+>&lt;/p>
+&lt;ul>
+&lt;li>服务器端&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/thread3.png"
+loading="lazy"
+alt="thread3"
+>&lt;/p>
+&lt;h4 id="2线程池">&lt;a href="#2%e7%ba%bf%e7%a8%8b%e6%b1%a0" class="header-anchor">&lt;/a>（2）线程池
+&lt;/h4>&lt;p>​ 使用&lt;code>ThreadPoolExecutor&lt;/code>来实例化线程池对象。传入&lt;code>max_workers&lt;/code>参数来设置线程池中最多能同时运行的线程数目。&lt;/p>
+&lt;p>​ 使用&lt;code>submit&lt;/code>函数来提交线程需要执行的任务（函数名和参数）到线程池中，并返回该任务的抽象对象。&lt;code>submit()&lt;/code>不是阻塞的，而是立即返回。通过&lt;code>submit&lt;/code>函数返回的任务抽象对象，能够使用其&lt;code>done()&lt;/code>方法判断任务是否结束。&lt;/p>
+&lt;p>​ 通过&lt;code>ThreadPoolExecutor()&lt;/code>创建了一个最大工作线程数为10的线程池。&lt;/p>
+&lt;p>​ 若将服务器端线程池最大工作线程数设置为比客户端请求线程总数小，由于线程池只会维护最大工作线程数的线程进行工作，因此，当线程池的线程已满时，后到的任务需要排队等待线程池对其进行工作调度。&lt;/p>
+&lt;h5 id="客户端-1">&lt;a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-anchor">&lt;/a>客户端
+&lt;/h5>&lt;p>​ 和多线程的客户端完成相同的功能，所以线程池的客户端代码与多线程的相同。&lt;/p>
+&lt;h5 id="服务端-1">&lt;a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-anchor">&lt;/a>服务端
+&lt;/h5>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">concurrent.futures&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">ThreadPoolExecutor&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">9997&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 定义处理客户端请求的函数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">work&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接收客户端发送的消息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># 从客户端接收最多1024字节的数据，并解码为字符串&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器接收来自:&lt;/span>&lt;span class="se">\t&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;的信息,内容为:&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">data&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">send&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;你已签到&amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span> &lt;span class="c1"># 发送&amp;#34;你已签到&amp;#34;消息到客户端&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器向&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;回复消息&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;服务器与客户端:&lt;/span>&lt;span class="se">\t&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;的连接关闭&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="vm">__name__&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;__main__&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_STREAM&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 绑定服务器的IP地址和端口&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 开始监听客户端连接，最多允许5个客户端排队&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">listen&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;server waiting...&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印服务器等待连接的状态&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 服务器主循环，持续等待客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">pool&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">ThreadPoolExecutor&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">max_workers&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">accept&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">pool&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">submit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">work&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">addr&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s1">&amp;#39;客户端:&lt;/span>&lt;span class="se">\t\t&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">addr&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s1">连接成功&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h5 id="运行结果-1">&lt;a href="#%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c-1" class="header-anchor">&lt;/a>运行结果
+&lt;/h5>&lt;p>客户端：&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/threadpool1.png"
+loading="lazy"
+alt="threadpool1"
+>&lt;/p>
+&lt;p>服务端：&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/threadpool2.png"
+loading="lazy"
+alt="threadpool2"
+>&lt;/p>
+&lt;h4 id="3多线程线程池的比较">&lt;a href="#3%e5%a4%9a%e7%ba%bf%e7%a8%8b%e7%ba%bf%e7%a8%8b%e6%b1%a0%e7%9a%84%e6%af%94%e8%be%83" class="header-anchor">&lt;/a>（3）多线程/线程池的比较
+&lt;/h4>&lt;p>（1）线程池是在程序运行开始，创建好的n个线程，并且这n个线程挂起等待任务的到来。而多线程是在任务到来得时候进行创建，然后执行任务。&lt;/p>
+&lt;p>（2）线程池中的线程执行完之后不会回收线程，会继续将线程放在等待队列中；多线程程序在每次任务完成之后会回收该线程。&lt;/p>
+&lt;p>（3）由于线程池中线程是创建好的，所以在效率上相对于多线程会高很多。&lt;/p>
+&lt;p>（4）线程池也在高并发的情况下有着较好的性能；不容易挂掉。多线程在创建线程数较多的情况下，很容易挂掉。&lt;/p>
+&lt;p>总结：&lt;/p>
+&lt;ul>
+&lt;li>多线程
+&lt;ul>
+&lt;li>特点：为每个连接创建新线程，线程生命周期由程序控制。&lt;/li>
+&lt;li>优点：实现简单，适合少量并发。&lt;/li>
+&lt;li>缺点：线程过多时资源消耗大，可能导致性能下降。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>线程池
+&lt;ul>
+&lt;li>特点：预先创建固定数量的线程，任务完成后线程复用。&lt;/li>
+&lt;li>优点：减少线程创建和销毁开销，适合高并发场景。&lt;/li>
+&lt;li>缺点：实现稍复杂，需管理线程数量。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>使用场景&lt;/strong>：多线程适合小型应用，线程池适合大规模服务器程序。&lt;/li>
+&lt;/ul>
+&lt;h3 id="25一个简单的文件传输助手">&lt;a href="#25%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e6%96%87%e4%bb%b6%e4%bc%a0%e8%be%93%e5%8a%a9%e6%89%8b" class="header-anchor">&lt;/a>2.5、一个简单的文件传输助手
+&lt;/h3>&lt;p>​ 使用TCP连接，通过选定文件路径，在客户端与服务端进行文件传输&lt;/p>
+&lt;p>协议结构：&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>头部&lt;/strong>：包含文件名（字符串）和文件大小（整数），使用JSON编码。&lt;/li>
+&lt;li>&lt;strong>数据&lt;/strong>：文件内容的二进制数据。&lt;/li>
+&lt;/ol>
+&lt;h4 id="客户端-2">&lt;a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-2" class="header-anchor">&lt;/a>客户端
+&lt;/h4>&lt;p>提供文件路径，文件内容和文件大小&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socket&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">ip_port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9996&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">try&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># Create a new socket for each file transfer attempt&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AF_INET&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SOCK_STREAM&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">connect&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ip_port&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">input&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;path: &amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Input file path&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">):&lt;/span> &lt;span class="c1"># Check if file exists&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;文件不存在，请重新输入路径！&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">continue&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">lower&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;quit&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="c1"># Allow user to exit by typing &amp;#39;quit&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;退出程序&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">file_name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">basename&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Get file name&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">file_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">stat&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">st_size&lt;/span> &lt;span class="c1"># Get file size&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># Construct file information string in the format &amp;#34;filename|filesize&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">Informf&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">file_name&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">|&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">file_size&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">send&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Informf&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span> &lt;span class="c1"># Send file information to server&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># Wait for server confirmation&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">confirmation&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;服务器确认: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">confirmation&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;准备上传文件...&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Print preparing to upload message&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">send_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="c1"># Track sent file size&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">with&lt;/span> &lt;span class="nb">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;rb&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="c1"># Open file in binary read mode&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="n">send_size&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">file_size&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># Read remaining bytes if less than 1024 bytes are left&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">file_size&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">send_size&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">1024&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_size&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">send_size&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Read 1024 bytes at a time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">send&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Send file content to server&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">send_size&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Update sent size&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;已发送: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">send_size&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">/&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">file_size&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> 字节&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Print progress&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;文件上传完成！&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Print upload complete message&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># Wait for server to confirm file upload completion&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">shutdown&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socket&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">SHUT_WR&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Signal end of sending&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">final_confirmation&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;服务器最终确认: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">final_confirmation&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;文件上传成功！&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span> &lt;span class="c1"># Exit loop after successful upload&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">except&lt;/span> &lt;span class="ne">ConnectionRefusedError&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;无法连接到服务器，请检查服务器是否运行！&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">except&lt;/span> &lt;span class="ne">Exception&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="n">e&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;发生错误: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">continue&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">finally&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sk&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># Ensure socket is closed&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;客户端已退出&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="服务端-2">&lt;a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-2" class="header-anchor">&lt;/a>服务端
+&lt;/h4>&lt;p>逐步接收客户端传输过来的数据&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">socketserver&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">MyServer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">socketserver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">BaseRequestHandler&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">handle&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">base_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sa">r&lt;/span>&lt;span class="s1">&amp;#39;C:\Users\Lenovo\Desktop\network\lab2\file_save&amp;#39;&lt;/span> &lt;span class="c1"># 文件保存的目录&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">request&lt;/span> &lt;span class="c1"># 获取客户端连接&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;connected...&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印连接信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 接收文件名和文件大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">pre_data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># 接收客户端发送的文件名和文件大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">file_name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pre_data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">split&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;|&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 解析文件名和文件大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">file_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_size&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 将文件大小转换为整数&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 确认接收准备&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sendall&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">file_name&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">已发送&amp;#34;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">encode&lt;/span>&lt;span class="p">())&lt;/span> &lt;span class="c1"># 向客户端发送确认消息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 创建保存文件的路径&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">file_dir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">base_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">file_name&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 确保目录存在&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">makedirs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">base_path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">exist_ok&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 打开文件准备写入&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">with&lt;/span> &lt;span class="nb">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_dir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;wb&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">recv_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="c1"># 已接收的文件大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="n">recv_size&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">file_size&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="c1"># 循环接收文件内容&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">conn&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">recv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1024&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 接收文件内容&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">f&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 将接收到的内容写入文件&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">recv_size&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 更新已接收的文件大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;已接收: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">recv_size&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">/&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">file_size&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> 字节&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印接收进度&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;upload successed.&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># 打印上传成功信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 创建多线程TCP服务器&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">instance&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">socketserver&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ThreadingTCPServer&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="s1">&amp;#39;127.0.0.1&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">9996&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">MyServer&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">instance&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">serve_forever&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># 启动服务器&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="运行结果-2">&lt;a href="#%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c-2" class="header-anchor">&lt;/a>运行结果
+&lt;/h4>&lt;p>​ 首先将想要传输的文件放到file_send文件夹中，服务端读取文件后会将其存储到file_save文件夹中&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/chat1.png"
+loading="lazy"
+alt="chat1"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/chat2.png"
+loading="lazy"
+alt="chat2"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/images/chat3.png"
+loading="lazy"
+alt="chat3"
+>&lt;/p>
+&lt;h2 id="三实验总结">&lt;a href="#%e4%b8%89%e5%ae%9e%e9%aa%8c%e6%80%bb%e7%bb%93" class="header-anchor">&lt;/a>三、实验总结
+&lt;/h2>&lt;p>​ 通过本次实验，我掌握了使用socket实现TCP和UDP通信的基本方法，理解了两者的核心差异：TCP提供可靠传输，适合文件传输等场景；UDP速度快但不可靠，适合实时应用。此外，我学习了多线程和线程池的设计，多线程通过为每个连接分配线程提升并发能力，而线程池通过线程复用优化了资源利用，适用于高负载环境。在文件传输中，我设计了简单的协议并加入错误处理，提升了程序健壮性。这次实验让我深刻体会到网络编程中性能与可靠性的权衡，以及并发处理的实际应用价值。&lt;/p></description></item></channel></rss>

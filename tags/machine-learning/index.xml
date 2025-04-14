@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Machine Learning on xzxg001</title><link>https://xzxg001.github.io/tags/machine-learning/</link><description>Recent content in Machine Learning on xzxg001</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 15 Oct 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xzxg001.github.io/tags/machine-learning/index.xml" rel="self" type="application/rss+xml"/><item><title>CLIPSelf</title><link>https://xzxg001.github.io/p/paper/</link><pubDate>Tue, 15 Oct 2024 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/p/paper/</guid><description>&lt;img src="https://xzxg001.github.io/p/paper/image.png" alt="Featured image of post CLIPSelf" />&lt;h1 id="clipself-视觉transformer自蒸馏用于开放词汇的密集预测">&lt;a href="#clipself-%e8%a7%86%e8%a7%89transformer%e8%87%aa%e8%92%b8%e9%a6%8f%e7%94%a8%e4%ba%8e%e5%bc%80%e6%94%be%e8%af%8d%e6%b1%87%e7%9a%84%e5%af%86%e9%9b%86%e9%a2%84%e6%b5%8b" class="header-anchor">&lt;/a>CLIPSelf: 视觉Transformer自蒸馏用于开放词汇的密集预测
+&lt;/h1>&lt;p>本文我是对 CLIPSelf 论文的详细解读，该论文提出了一种创新的视觉 Transformer 自蒸馏方法，旨在解决开放词汇的密集预测任务。
+CLIP (Contrastive Language-Image Pre-training) 模型凭借其强大的对齐方式在多领域任务上实现了零样本识别能力，而 CLIPSelf 则进一步扩展了这一能力，使其适用于像语义分割和目标检测这样的密集预测任务，达到了新的高性能。&lt;/p>
+&lt;p>在这篇文章中，我将首先介绍CLIP模型的基础内容，接着探讨 CLIPSelf 的核心思想、技术创新点、实现方法以及其在多个基准测试上的表现。
+通过自蒸馏机制，CLIPSelf 实现了从图像级别的对比学习到像素级别的密集预测的知识转移，无需额外的监督信号，同时保持了 CLIP 模型开放词汇的优势。&lt;/p>
+&lt;p>这一技术对于实际应用具有重要意义，特别是在处理包含未见过类别的场景时，能够提供更加灵活和强大的视觉理解能力。&lt;/p>
+&lt;p>根据这篇文章，我对多模态数据融合产生了极大的兴趣，特别是CLIP这种朴素的想法，在使用大量文本-图像对齐之后，模型具有良好的模态交互能力，但是这种能力仍然受到限制，我希望未来优化多模态数据融合架构，形成像transformer一样的模型架构。&lt;/p>
+&lt;p>通过以下幻灯片，我将逐步解析 CLIPSelf 的工作原理和技术细节。&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_1_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_1_docsmall.com_hu_2c768fd69c281773.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_1_docsmall.com_hu_1a24a368a4422cfc.jpg 1024w"
+loading="lazy"
+alt="Page 1"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_2_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_2_docsmall.com_hu_172493ea19a49300.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_2_docsmall.com_hu_fd861af5e7e23452.jpg 1024w"
+loading="lazy"
+alt="Page 2"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_3_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_3_docsmall.com_hu_8c18882d054592e5.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_3_docsmall.com_hu_9e754b89737d106c.jpg 1024w"
+loading="lazy"
+alt="Page 3"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_4_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_4_docsmall.com_hu_cf5e7e218410a7a4.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_4_docsmall.com_hu_41c98920a6cd5b90.jpg 1024w"
+loading="lazy"
+alt="Page 4"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_5_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_5_docsmall.com_hu_47ecaa4e1ab8c4f4.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_5_docsmall.com_hu_548b28000c689579.jpg 1024w"
+loading="lazy"
+alt="Page 5"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_6_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_6_docsmall.com_hu_cfedf6cfcce2aeb7.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_6_docsmall.com_hu_83215ac544d44ed.jpg 1024w"
+loading="lazy"
+alt="Page 6"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_7_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_7_docsmall.com_hu_83e8028ad4983804.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_7_docsmall.com_hu_5f34f4dbdc421234.jpg 1024w"
+loading="lazy"
+alt="Page 7"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_8_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_8_docsmall.com_hu_74fc0af223fdaaf2.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_8_docsmall.com_hu_8f18aca1392f224c.jpg 1024w"
+loading="lazy"
+alt="Page 8"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_9_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_9_docsmall.com_hu_d8efedaf865e8e28.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_9_docsmall.com_hu_82eadd63c0a18da0.jpg 1024w"
+loading="lazy"
+alt="Page 9"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_10_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_10_docsmall.com_hu_a7b581df16227c69.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_10_docsmall.com_hu_f0dfd9e1334b9434.jpg 1024w"
+loading="lazy"
+alt="Page 10"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_11_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_11_docsmall.com_hu_b3be8bd3ef905cb.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_11_docsmall.com_hu_5f4c1088860b6aae.jpg 1024w"
+loading="lazy"
+alt="Page 11"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_12_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_12_docsmall.com_hu_543b2884e81b7038.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_12_docsmall.com_hu_d96d73ef7e86c5ee.jpg 1024w"
+loading="lazy"
+alt="Page 12"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_13_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_13_docsmall.com_hu_a6e3ddec930e79dc.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_13_docsmall.com_hu_f8611dd97927b9f5.jpg 1024w"
+loading="lazy"
+alt="Page 13"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_14_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_14_docsmall.com_hu_50163094a8a72ec1.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_14_docsmall.com_hu_d7aa3691a6f28a58.jpg 1024w"
+loading="lazy"
+alt="Page 14"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_15_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_15_docsmall.com_hu_c080d66f6b3f828b.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_15_docsmall.com_hu_eb8946135865b635.jpg 1024w"
+loading="lazy"
+alt="Page 15"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_16_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_16_docsmall.com_hu_daf97a690208cf59.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_16_docsmall.com_hu_c3aba39a8f21f61b.jpg 1024w"
+loading="lazy"
+alt="Page 16"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_17_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_17_docsmall.com_hu_71e7732c13f15b99.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_17_docsmall.com_hu_b513815a4aa0a7.jpg 1024w"
+loading="lazy"
+alt="Page 17"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_18_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_18_docsmall.com_hu_516a81af4ae68ae9.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_18_docsmall.com_hu_a9e737d8c923712.jpg 1024w"
+loading="lazy"
+alt="Page 18"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_19_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_19_docsmall.com_hu_5c1dc07e3fab5f67.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_19_docsmall.com_hu_d238a09aee63c1df.jpg 1024w"
+loading="lazy"
+alt="Page 19"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_20_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_20_docsmall.com_hu_8dcda105dcd799df.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_20_docsmall.com_hu_67f95b8edbdbcfa6.jpg 1024w"
+loading="lazy"
+alt="Page 20"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_21_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_21_docsmall.com_hu_e6bf6721bfc9d04e.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_21_docsmall.com_hu_1378775b0d780fd9.jpg 1024w"
+loading="lazy"
+alt="Page 21"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_22_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_22_docsmall.com_hu_28bfd0ca6a339206.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_22_docsmall.com_hu_7ccbe62f431b1424.jpg 1024w"
+loading="lazy"
+alt="Page 22"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_23_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_23_docsmall.com_hu_f71021f18ab8b66.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_23_docsmall.com_hu_7f71176a97b2ae6.jpg 1024w"
+loading="lazy"
+alt="Page 23"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_24_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_24_docsmall.com_hu_6ceae1e6ac2a120c.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_24_docsmall.com_hu_d5efed1cd24174d6.jpg 1024w"
+loading="lazy"
+alt="Page 24"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_25_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_25_docsmall.com_hu_470282d93a432c13.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_25_docsmall.com_hu_2cf83d922478ee18.jpg 1024w"
+loading="lazy"
+alt="Page 25"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_26_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_26_docsmall.com_hu_453b52a4f2efcc71.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_26_docsmall.com_hu_5bf09d3a1e79fa6f.jpg 1024w"
+loading="lazy"
+alt="Page 26"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_27_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_27_docsmall.com_hu_db7a444e0a012a5c.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_27_docsmall.com_hu_a03f2f1e5031a92e.jpg 1024w"
+loading="lazy"
+alt="Page 27"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_28_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_28_docsmall.com_hu_3ff55177f626221f.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_28_docsmall.com_hu_31a2326f806d6099.jpg 1024w"
+loading="lazy"
+alt="Page 28"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_29_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_29_docsmall.com_hu_5b5a55e16773b4ba.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_29_docsmall.com_hu_6a67a1c181bb0773.jpg 1024w"
+loading="lazy"
+alt="Page 29"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_30_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_30_docsmall.com_hu_296abb2aabd24c29.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_30_docsmall.com_hu_2f78b1048509a8db.jpg 1024w"
+loading="lazy"
+alt="Page 30"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_31_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_31_docsmall.com_hu_9c8156f097b40926.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_31_docsmall.com_hu_973a3ea6bcb6dcd4.jpg 1024w"
+loading="lazy"
+alt="Page 31"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_32_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_32_docsmall.com_hu_19b76972a50bbeb9.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_32_docsmall.com_hu_3a7edd15aae9e4c0.jpg 1024w"
+loading="lazy"
+alt="Page 32"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_33_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_33_docsmall.com_hu_1a8fb87c52ec3022.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_33_docsmall.com_hu_6020759180e575cb.jpg 1024w"
+loading="lazy"
+alt="Page 33"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_34_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_34_docsmall.com_hu_74a3a12536f81d57.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_34_docsmall.com_hu_b99d78386ac335aa.jpg 1024w"
+loading="lazy"
+alt="Page 34"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_35_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_35_docsmall.com_hu_918b81da2c80ced2.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_35_docsmall.com_hu_1c99da480be86021.jpg 1024w"
+loading="lazy"
+alt="Page 35"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_36_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_36_docsmall.com_hu_84184ad98d2791c7.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_36_docsmall.com_hu_4a66a593aa464e62.jpg 1024w"
+loading="lazy"
+alt="Page 36"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_37_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_37_docsmall.com_hu_fad4fd7e889e0535.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_37_docsmall.com_hu_fa62be00a08b57a2.jpg 1024w"
+loading="lazy"
+alt="Page 37"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_38_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_38_docsmall.com_hu_6538af16044264e2.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_38_docsmall.com_hu_458a885fb793b8c7.jpg 1024w"
+loading="lazy"
+alt="Page 38"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_39_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_39_docsmall.com_hu_d510df612956ac0d.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_39_docsmall.com_hu_bcfbb483fe21753e.jpg 1024w"
+loading="lazy"
+alt="Page 39"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p>
+&lt;p>&lt;img src="https://xzxg001.github.io/p/paper/images/Page_40_docsmall.com.jpg"
+width="4000"
+height="2250"
+srcset="https://xzxg001.github.io/p/paper/images/Page_40_docsmall.com_hu_836e5e196d371f5a.jpg 480w, https://xzxg001.github.io/p/paper/images/Page_40_docsmall.com_hu_a5a91916c5b1fcbc.jpg 1024w"
+loading="lazy"
+alt="Page 40"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="426px"
+>&lt;/p></description></item><item><title>Metrics</title><link>https://xzxg001.github.io/p/metrics/</link><pubDate>Thu, 04 Apr 2024 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/p/metrics/</guid><description>&lt;img src="https://xzxg001.github.io/p/metrics/image.png" alt="Featured image of post Metrics" />&lt;h1 id="机器学习常用性能指标总结metrics">&lt;a href="#%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%e5%b8%b8%e7%94%a8%e6%80%a7%e8%83%bd%e6%8c%87%e6%a0%87%e6%80%bb%e7%bb%93metrics" class="header-anchor">&lt;/a>机器学习常用性能指标总结metrics
+&lt;/h1>&lt;p>​ 在机器学习中，&lt;a class="link" href="Metrics" >性能指标&lt;/a>是衡量一个模型好坏的关键，通过衡量模型输出y_predict 和 y_true之间的某种&amp;quot;距离&amp;quot;得出的。&lt;/p>
+&lt;p>​ 性能指标往往是我们做模型时的最终目标，如准确率，召回率，敏感度等等，但是性能指标常常因为不可微分，无法作为优化的loss函数，因此采用如cross-entropy, rmse等“距离”可微函数作为优化目标，以期待在loss函数降低的时候，能够&lt;strong>提高性能指标&lt;/strong>。而最终目标的性能指标则作为模型训练过程中，作为验证集做决定(early stoping或model selection)的主要依据，与训练结束后评估本次训练出的模型好坏的重要标准。&lt;/p>
+&lt;h2 id="性能指标的分类">&lt;a href="#%e6%80%a7%e8%83%bd%e6%8c%87%e6%a0%87%e7%9a%84%e5%88%86%e7%b1%bb" class="header-anchor">&lt;/a>性能指标的分类
+&lt;/h2>&lt;p>​ 根据问题类型的不同，机器学习中的性能指标主要分为：回归性能指标和分类性能指标。&lt;/p>
+&lt;h3 id="回归性能指标">&lt;a href="#%e5%9b%9e%e5%bd%92%e6%80%a7%e8%83%bd%e6%8c%87%e6%a0%87" class="header-anchor">&lt;/a>回归性能指标
+&lt;/h3>&lt;h4 id="平均绝对误差">&lt;a href="#%e5%b9%b3%e5%9d%87%e7%bb%9d%e5%af%b9%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>平均绝对误差
+&lt;/h4>&lt;p>​ 平均绝对误差（Mean Absolute Error，MAE），也称为 L1 损失，是最简单的损失函数之一，也是一种易于理解的评估指标。它是通过取预测值和实际值之间的绝对差值并在整个数据集中取平均值来计算的。从数学上讲，它是绝对误差的算术平均值。MAE 仅测量误差的大小，不关心它们的方向。MAE越低，模型的准确性就越高。&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>由于采用了绝对值，因此所有误差都以相同的比例加权。&lt;/li>
+&lt;li>如果训练数据有异常值，MAE 不会惩罚由&lt;a class="link" href="https://so.csdn.net/so/search?q=%e5%bc%82%e5%b8%b8%e5%80%bc&amp;amp;spm=1001.2101.3001.7020" target="_blank" rel="noopener"
+>异常值&lt;/a>引起的高错误。&lt;/li>
+&lt;li>它提供了模型执行情况的平均度量。&lt;/li>
+&lt;/ul>
+&lt;p>缺点：&lt;/p>
+&lt;ul>
+&lt;li>有时来自异常值的大错误最终被视为与低错误相同。&lt;/li>
+&lt;li>在零处不可微分。许多优化算法倾向于使用微分来找到评估指标中参数的最佳值。在 MAE 中计算梯度可能具有挑战性。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">mean_absolute_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">abs_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum_abs_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">abs_error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mae_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sum_abs_error&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">mae_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="平均偏差误差">&lt;a href="#%e5%b9%b3%e5%9d%87%e5%81%8f%e5%b7%ae%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>平均偏差误差
+&lt;/h4>&lt;p>平均偏差误差(Mean Bias Error ,MBE)是测量过程高估或低估参数值的趋势。偏差只有一个方向，可以是正的，也可以是负的。正偏差意味着数据的误差被高估，负偏差意味着误差被低估。平均偏差误差 是预测值与实际值之差的平均值。该评估指标量化了总体偏差并捕获了预测中的平均偏差。&lt;strong>它几乎与 MAE 相似，唯一的区别是这里没有取绝对值。这个评估指标应该小心处理，因为正负误差可以相互抵消。&lt;/strong>&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>想检查模型的方向（即是否存在正偏差或负偏差）并纠正模型偏差，MBE 是一个很好的衡量标准。&lt;/li>
+&lt;/ul>
+&lt;p>缺点：&lt;/p>
+&lt;ul>
+&lt;li>就幅度而言，这不是一个好的衡量标准，因为误差往往会相互补偿。&lt;/li>
+&lt;li>它的可靠性不高，因为有时高个体错误会产生低MBE。&lt;/li>
+&lt;li>作为一种评估指标，它在一个方向上可能始终是错误的。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">mean_bias_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">bias_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mbe_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mean&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">diff&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">mbe_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="相对绝对误差">&lt;a href="#%e7%9b%b8%e5%af%b9%e7%bb%9d%e5%af%b9%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>相对绝对误差
+&lt;/h4>&lt;p>相对绝对误差（Relative Absolute Error ，RAE）是通过将总绝对误差除以平均值和实际值之间的绝对差来计算的。RAE并以比率表示。RAE的值从0到1。一个好的模型将具有接近于零的值，其中零是最佳值。&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>RAE 可用于比较以不同单位测量误差的模型。&lt;/li>
+&lt;li>RAE 是可靠的，因为它可以防止异常值。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">relative_absolute_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">true_mean&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mean&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error_num&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error_den&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">true_mean&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rae_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">squared_error_num&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">squared_error_den&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">rae_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="平均绝对百分比误差">&lt;a href="#%e5%b9%b3%e5%9d%87%e7%bb%9d%e5%af%b9%e7%99%be%e5%88%86%e6%af%94%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>平均绝对百分比误差
+&lt;/h4>&lt;p>平均绝对百分比误差(Mean Absolute Percentage Error ,MAPE)是通过将实际值与预测值之间的差值除以实际值来计算的。MAPE 也称为平均绝对百分比偏差，随着误差的增加而线性增加。MAPE 越小，模型性能越好。&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>MAPE与变量的规模无关，因为它的误差估计是以百分比为单位的。&lt;/li>
+&lt;li>所有错误都在一个共同的尺度上标准化，很容易理解。&lt;/li>
+&lt;li>MAPE避免了正值和负值相互抵消的问题。&lt;/li>
+&lt;/ul>
+&lt;p>缺点：&lt;/p>
+&lt;ul>
+&lt;li>分母值为零时，面临着“除以零”的问题。&lt;/li>
+&lt;li>MAPE对数值较小的误差比对数值大的误差错误的惩罚更多。&lt;/li>
+&lt;li>因为使用除法运算，所欲对于相同的误差，实际值的变化将导致损失的差异。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">mean_absolute_percentage_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">abs_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum_abs_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">abs_error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mape_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">sum_abs_error&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mi">100&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">mape_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="均方误差">&lt;a href="#%e5%9d%87%e6%96%b9%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>均方误差
+&lt;/h4>&lt;p>均方误差（Mean Squared Error ，MSE）也称为 L2 损失，MSE通过将预测值和实际值之间的差平方并在整个数据集中对其进行平均来计算误差。MSE 也称为二次损失，因为惩罚与误差不成正比，而是与误差的平方成正比。平方误差为异常值赋予更高的权重，从而为小误差产生平滑的梯度。&lt;/p>
+&lt;p>MSE 永远不会是负数，因为误差是平方的。误差值范围从零到无穷大。MSE 随着误差的增加呈指数增长。一个好的模型的 MSE 值接近于零。&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>MSE会得到一个只有一个全局最小值的梯度下降。&lt;/li>
+&lt;li>对于小的误差，它可以有效地收敛到最小值。没有局部最小值。&lt;/li>
+&lt;li>MSE 通过对模型进行平方来惩罚具有巨大错误的模型。&lt;/li>
+&lt;/ul>
+&lt;p>缺点：&lt;/p>
+&lt;ul>
+&lt;li>对异常值的敏感性通过对它们进行平方来放大高误差。&lt;/li>
+&lt;li>MSE会受到异常值的影响，会寻找在整体水平上表现足够好的模型。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">mean_squared_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">square&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">squared_error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">mse_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">mse_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="均方根偏差">&lt;a href="#%e5%9d%87%e6%96%b9%e6%a0%b9%e5%81%8f%e5%b7%ae" class="header-anchor">&lt;/a>均方根偏差
+&lt;/h4>&lt;p>均方根偏差（Root Mean Squared Error ，RMSE）是通过取 MSE 的平方根来计算的。它测量误差的平均幅度，并关注与实际值的偏差。RMSE 值为零表示模型具有完美拟合。RMSE 越低，模型及其预测就越好。&lt;/p>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>易于理解，计算方便&lt;/li>
+&lt;/ul>
+&lt;p>缺点：&lt;/p>
+&lt;ul>
+&lt;li>建议去除异常值才能使其正常运行。&lt;/li>
+&lt;li>会受到数据样本大小的影响。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">root_mean_squared_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">square&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">squared_error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rmse_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sqrt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">rmse_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="相对平方误差">&lt;a href="#%e7%9b%b8%e5%af%b9%e5%b9%b3%e6%96%b9%e8%af%af%e5%b7%ae" class="header-anchor">&lt;/a>相对平方误差
+&lt;/h4>&lt;p>相对平方误差(Relative Squared Error ,RSE)需要使用均方误差并将其除以实际数据与数据平均值之间的差异的平方。&lt;/p>
+&lt;p>优点&lt;/p>
+&lt;ul>
+&lt;li>对预测的平均值和规模不敏感。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">relative_squared_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">true_mean&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mean&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error_num&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">square&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error_den&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">square&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">true_mean&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rse_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">squared_error_num&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">squared_error_den&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">rse_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="归一化-rmse">&lt;a href="#%e5%bd%92%e4%b8%80%e5%8c%96-rmse" class="header-anchor">&lt;/a>归一化 RMSE
+&lt;/h4>&lt;p>归一化 RMSE 通常通过除以一个标量值来计算，它可以有不同的方式。有时选择四分位数范围可能是最好的选择，因为其他方法容易出现异常值。当您想要比较不同因变量的模型或修改因变量时，NRMSE 是一个很好的度量。它克服了尺度依赖性，简化了不同尺度模型甚至数据集之间的比较。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">normalized_root_mean_squared_error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">square&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">true&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">pred&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">squared_error&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rmse&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sqrt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sum_squared_error&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">true&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">size&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">nrmse_loss&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rmse&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">std&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">pred&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">nrmse_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="分类性能指标">&lt;a href="#%e5%88%86%e7%b1%bb%e6%80%a7%e8%83%bd%e6%8c%87%e6%a0%87" class="header-anchor">&lt;/a>分类性能指标
+&lt;/h3>&lt;h4 id="混淆矩阵">&lt;a href="#%e6%b7%b7%e6%b7%86%e7%9f%a9%e9%98%b5" class="header-anchor">&lt;/a>混淆矩阵
+&lt;/h4>&lt;p>​ 也叫可能性矩阵或错误矩阵。混淆矩阵是可视化工具，特别用于监督学习，在无监督学习一般叫做匹配矩阵。在图像精度评价中，主要用于比较分类结果和实际测得值，可以把分类结果的精度显示在一个混淆矩阵里面。&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>None&lt;/th>
+&lt;th>预测1&lt;/th>
+&lt;th>预测0&lt;/th>
+&lt;th>合计&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>实际1(P)&lt;/td>
+&lt;td>TP&lt;/td>
+&lt;td>FN&lt;/td>
+&lt;td>TP+FN (P)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>实际0(N)&lt;/td>
+&lt;td>FP&lt;/td>
+&lt;td>TN&lt;/td>
+&lt;td>FP+TN(N)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>合计&lt;/td>
+&lt;td>TP+FP&lt;/td>
+&lt;td>FN+TN&lt;/td>
+&lt;td>TP+FN+FP+TN&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>其中&lt;strong>T/F表示预测是否正确&lt;/strong>，&lt;strong>P/N表示预测的label&lt;/strong>而不是实际的label&lt;/p>
+&lt;p>True Positive（TP）：真正类。样本的真实类别是正类，并且模型识别的结果也是正类。&lt;/p>
+&lt;p>False Negative（FN）：假负类。样本的真实类别是正类，但是模型将其识别为负类。&lt;/p>
+&lt;p>False Positive（FP）：假正类。样本的真实类别是负类，但是模型将其识别为正类。&lt;/p>
+&lt;p>True Negative（TN）：真负类。样本的真实类别是负类，并且模型将其识别为负类。&lt;/p>
+&lt;h4 id="准确率">&lt;a href="#%e5%87%86%e7%a1%ae%e7%8e%87" class="header-anchor">&lt;/a>准确率
+&lt;/h4>$$Acc=(TP+TN)/(TP+FN+FP+TN)$$&lt;p>​ 即预测正确的样本比例，表示了一个分类器的区分能力，注意，这里的区分能力&lt;strong>没有偏向于是正例还是负例&lt;/strong>，这也是Accuracy作为性能指标最大的问题所在。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>优点&lt;/strong>：简单易懂。&lt;/li>
+&lt;li>&lt;strong>缺点&lt;/strong>：在类别不平衡的情况下，容易产生误导。例如，当正负样本比例极度不平衡时，模型即使预测所有样本为多数类，也可能得到较高的准确率。&lt;/li>
+&lt;/ul>
+&lt;h4 id="精确率查准率">&lt;a href="#%e7%b2%be%e7%a1%ae%e7%8e%87%e6%9f%a5%e5%87%86%e7%8e%87" class="header-anchor">&lt;/a>精确率/查准率
+&lt;/h4>$$Pre=TP/(TP+FP)$$&lt;p>​ 表示在所有被预测为正例的样本中，真正是正例的比例。对于数据不平衡或是当某一方数据漏掉(通常是把这样的例子作为正例)时会产生很大的代价的时候，我们需要更有效的指标作为补充。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>优点&lt;/strong>：在关注预测结果为正类时的正确性（如垃圾邮件检测）时，精确率是一个重要指标。&lt;/li>
+&lt;li>&lt;strong>缺点&lt;/strong>：忽略了实际正类样本中有多少被正确预测。&lt;/li>
+&lt;/ul>
+&lt;h4 id="召回率查全率敏感度">&lt;a href="#%e5%8f%ac%e5%9b%9e%e7%8e%87%e6%9f%a5%e5%85%a8%e7%8e%87%e6%95%8f%e6%84%9f%e5%ba%a6" class="header-anchor">&lt;/a>召回率/查全率/敏感度
+&lt;/h4>$$Recall=TP/(TP+FN)$$&lt;p>​ 表示在所有实际为正例的样本中，被预测为正例的比例。在医学领域中，常把患病这样的高风险类别作为正类，&lt;strong>当漏掉正类的代价非常高&lt;/strong>，像是漏诊可能导致病人的延迟治疗，召回率就很重要。&lt;/p>
+&lt;p>在医学中，必须极力&lt;strong>降低漏诊率&lt;/strong>，而误诊(把负例判为正例)相对于漏诊的重要性就低了很多。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>优点&lt;/strong>：在关注所有正类样本都被正确识别时（如疾病检测），召回率是一个重要指标。&lt;/li>
+&lt;li>&lt;strong>缺点&lt;/strong>：忽略了预测为正类的样本中有多少是错误的。&lt;/li>
+&lt;/ul>
+&lt;h4 id="特异性">&lt;a href="#%e7%89%b9%e5%bc%82%e6%80%a7" class="header-anchor">&lt;/a>特异性
+&lt;/h4>$$Specificity=TN/(FP+TN)$$&lt;p>​ 表示在所有实际为负的样本中，被预测为负例的比例，即有多大概率被预测出来。可以简单地将特异性理解为负例查全率。特异性在医疗中也被认为是一个重要指标，因为特异性低也就是“误诊率高”，举一个极端例子，一个分类器把所有的样本都判定成患病，此时敏感度为1，但是有特异性却很低。因此，在医学领域，特异性和敏感度是需要同时考量的。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>优点&lt;/strong>：关注负类性能，在&lt;strong>负类重要性高&lt;/strong>的任务中（如疾病筛查中的健康人判断），特异性比准确率（Accuracy）更能反映模型对负类的识别能力。&lt;/li>
+&lt;li>&lt;strong>缺点&lt;/strong>：忽略正类性能，依赖明确的负类定义，无法单独作为评估标准&lt;/li>
+&lt;/ul>
+&lt;h4 id="fβ_">&lt;a href="#f%ce%b2_" class="header-anchor">&lt;/a>&lt;strong>Fβ_Score&lt;/strong>
+&lt;/h4>&lt;p>​ Fβ的物理意义就是将精确率和召回率的一种加权平均，在合并的过程中，召回率的权重是精确率的β倍。常用的是F1分数（F1 Score），是统计学中用来衡量二分类模型精确度的一种指标。Accuracy和F1-Score是判断分类模型总体的标准。&lt;/p>
+&lt;p>&lt;img src="https://i-blog.csdnimg.cn/blog_migrate/3e4f2a0cd742ceae4650569c634cfaf2.png"
+loading="lazy"
+alt="F1 score计算"
+>&lt;/p>
+&lt;p>&lt;img src="https://i-blog.csdnimg.cn/blog_migrate/6c57b65304c7a309b71f5795d6d8ddfb.png"
+loading="lazy"
+alt="Fβ score计算"
+>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Macro-F1和Micro-F1是相对于多标签分类而言的。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Micro-F1，计算出&lt;strong>所有类别总的&lt;/strong>Precision和Recall，然后计算F1。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Macro-F1，计算出&lt;strong>每一个类的&lt;/strong>Precison和Recall后计算F1，最后将F1平均。&lt;/p>
+&lt;p>​&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>优点&lt;/strong>：在类别不平衡的情况下，比单独使用精确率或召回率更能全面反映模型性能。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>缺点&lt;/strong>：无法同时优化精确率和召回率的具体值。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="roc曲线和auc">&lt;a href="#roc%e6%9b%b2%e7%ba%bf%e5%92%8cauc" class="header-anchor">&lt;/a>ROC曲线和AUC
+&lt;/h4>&lt;p>​ ROC曲线的全称叫做Receiver Operating Characteristic，常常被用来判别一个分类器的好坏程度&lt;/p>
+&lt;p>&lt;img src="https://i-blog.csdnimg.cn/blog_migrate/c030c4ec2fbed37d0093ac0428d796fb.png"
+loading="lazy"
+alt="ROC曲线"
+>&lt;/p>
+&lt;p>x轴坐标是False positive rate，即假正率，定义为&lt;/p>
+$$FPR=FP/(FP+TN)=1-Specificity$$&lt;p>，即误诊率，代表所有实际为负例的样本中，预测错误的比例。&lt;/p>
+&lt;p>y轴坐标是True positive rate，即真正率，定义为&lt;/p>
+$$TPR=TP/(TP+FN)$$&lt;p>,即召回率/查全率/敏感度&lt;/p>
+&lt;p>现在可知，ROC的x轴是误诊率，y轴是漏诊率。&lt;/p>
+&lt;p>​ AUC，即曲线下面积（Area Under Curve），是 ROC 曲线下面积的一个数值表示。它提供了一个定量的指标，用来衡量分类模型的整体表现。AUC 值范围从 0 到 1，值越大表示模型性能越好。&lt;/p>
+&lt;img src="https://i-blog.csdnimg.cn/blog_migrate/e4931f4fe68fc59f133ab07528b12498.png" alt="在这里插入图片描述" style="zoom: 33%;" />
+&lt;p>下方是具体绘制的方法&lt;/p>
+&lt;p>画出ROC的曲线的方法不只是计算一次误诊率和漏诊率，按照以下方式进行：&lt;/p>
+&lt;ol>
+&lt;li>将分类器预测为正例的概率从小到大排序&lt;/li>
+&lt;li>把每两个样本间的概率作为阈值，小于该阈值的分为负例，大于的分为正例&lt;/li>
+&lt;li>分别计算TPR和FPR&lt;/li>
+&lt;li>转2&lt;/li>
+&lt;li>当所有阈值都被枚举完之后，获得一组(TPR, FPR)的坐标点，将它们画出来。结束&lt;/li>
+&lt;/ol>
+&lt;p>下方是具体的python代码&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">sklearn.metrics&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">roc_curve&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">import&lt;/span> &lt;span class="nn">matplotlib.pyplot&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="nn">plt&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">p_rate&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">get_prob&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">X&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">#计算分类器把样本分为正例的概率&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">fpr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">tpr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">thresh&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">roc_curve&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">y_true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">p_rate&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">figure&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">figsize&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">title&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;ROC Curve&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">xlabel&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;False Positive Rate&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ylabel&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;True Positive Rate&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">grid&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">plot&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fpr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">tpr&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">savefig&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;roc.png&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>​ 模型的ROC曲线&lt;strong>离对角线越近，模型的准确率越低&lt;/strong>。如果模型真的很好，随着有序列表（第一张由元组标号的图）向下移动，开始就可能遇到真正例元组，图开始就陡峭地从 0 开始上升，后来遇到的真正例越来越少，假正例越来越多，曲线平缓变得更加水平。&lt;/p>
+&lt;p>​ 为了评估模型的准确率，可以测量曲线下方的面积（AUC）。面积越接近 0.5 ，模型的准确率越低。完全正确的模型面积为 1.0&lt;/p>
+&lt;ul>
+&lt;li>优点：
+&lt;ol>
+&lt;li>兼顾正例和负例的权衡。因为TPR聚焦于正例，FPR聚焦于与负例，使其成为一个比较均衡的评估方法。&lt;/li>
+&lt;li>ROC曲线选用的两个指标，不受类别不平衡影响，都不依赖于具体的类别分布，全面反映模型在不同阈值下的性能。&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>&lt;strong>缺点&lt;/strong>：计算复杂度较高，解释起来可能不直观。&lt;/li>
+&lt;/ul></description></item></channel></rss>
