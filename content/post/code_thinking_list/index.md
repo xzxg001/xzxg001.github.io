@@ -1,6 +1,6 @@
 ---
 title: Code_with_thinking:List
-date: 2025-5-4
+date: 2025-05-04
 description: a coding experiment for list
 image: image.png
 tags: 
@@ -12,6 +12,7 @@ categories:
 weight: 1
 math: true
 ---
+
 # 代码随想录_链表
 
 ## 1.链表：移除链表元素

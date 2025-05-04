@@ -1,6 +1,6 @@
 ---
 title: Code_with_thinking:Array 
-date: 2025-4-25
+date: 2025-04-25
 description: a coding experiment for array
 image: image.png
 tags: 
@@ -12,6 +12,7 @@ categories:
 weight: 1
 math: true
 ---
+
 # 代码随想录_数组
 
 ## 1.数组：二分查找
