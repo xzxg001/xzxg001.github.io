@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorial on xzxg001</title><link>https://xzxg001.github.io/tags/tutorial/</link><description>Recent content in Tutorial on xzxg001</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 31 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xzxg001.github.io/tags/tutorial/index.xml" rel="self" type="application/rss+xml"/><item><title>Download from huggingface quickly</title><link>https://xzxg001.github.io/p/download-from-huggingface-quickly/</link><pubDate>Tue, 31 Dec 2024 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/p/download-from-huggingface-quickly/</guid><description>&lt;img src="https://xzxg001.github.io/p/download-from-huggingface-quickly/image.png" alt="Featured image of post Download from huggingface quickly" />&lt;h1 id="快速下载huggingface模型">&lt;a href="#%e5%bf%ab%e9%80%9f%e4%b8%8b%e8%bd%bdhuggingface%e6%a8%a1%e5%9e%8b" class="header-anchor">&lt;/a>快速下载huggingface模型
+&lt;/h1>&lt;p>如何快速下载huggingface模型——全方法总结 - 知乎&lt;a class="link" href="https://zhuanlan.zhihu.com/p/663712983" target="_blank" rel="noopener"
+>方法总结&lt;/a>&lt;/p>
+&lt;p>有的时候下载huggingface会出现错误，是因为网络连接相关的问题吗，因此有一些快速下载模型来解决这个问题的方法。&lt;/p>
+&lt;h2 id="方法一网页下载">&lt;a href="#%e6%96%b9%e6%b3%95%e4%b8%80%e7%bd%91%e9%a1%b5%e4%b8%8b%e8%bd%bd" class="header-anchor">&lt;/a>方法一：网页下载
+&lt;/h2>&lt;p>在本站搜索，并在模型主页的&lt;code>Files and Version&lt;/code>中下载文件。&lt;/p>
+&lt;h2 id="方法二huggingface-cli">&lt;a href="#%e6%96%b9%e6%b3%95%e4%ba%8chuggingface-cli" class="header-anchor">&lt;/a>方法二：huggingface-cli
+&lt;/h2>&lt;p>&lt;a class="link" href="https://hf-mirror.com/docs/huggingface_hub/guides/download#download-from-the-cli" target="_blank" rel="noopener"
+>huggingface-cli &lt;/a>是 Hugging Face 官方提供的命令行工具，自带完善的下载功能。&lt;/p>
+&lt;h3 id="1-安装依赖">&lt;a href="#1-%e5%ae%89%e8%a3%85%e4%be%9d%e8%b5%96" class="header-anchor">&lt;/a>&lt;strong>1. 安装依赖&lt;/strong>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">pip install -U huggingface_hub
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-设置环境变量">&lt;a href="#2-%e8%ae%be%e7%bd%ae%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f" class="header-anchor">&lt;/a>&lt;strong>2. 设置环境变量&lt;/strong>
+&lt;/h3>&lt;p>&lt;strong>Linux&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">HF_ENDPOINT&lt;/span>&lt;span class="o">=&lt;/span>https://hf-mirror.com
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>Windows Powershell&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$env&lt;/span>:HF_ENDPOINT &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;https://hf-mirror.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>建议将上面这一行写入 &lt;code>~/.bashrc&lt;/code>。&lt;/p>
+&lt;h3 id="31-下载模型">&lt;a href="#31-%e4%b8%8b%e8%bd%bd%e6%a8%a1%e5%9e%8b" class="header-anchor">&lt;/a>&lt;strong>3.1 下载模型&lt;/strong>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">huggingface-cli download --resume-download gpt2 --local-dir gpt2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="32-下载数据集">&lt;a href="#32-%e4%b8%8b%e8%bd%bd%e6%95%b0%e6%8d%ae%e9%9b%86" class="header-anchor">&lt;/a>&lt;strong>3.2 下载数据集&lt;/strong>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">huggingface-cli download --repo-type dataset --resume-download wikitext --local-dir wikitext
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>可以添加 &lt;code>--local-dir-use-symlinks False&lt;/code> 参数禁用文件软链接，这样下载路径下所见即所得，详细解释请见上面提到的教程。&lt;/p>
+&lt;h2 id="方法三使用-hfd">&lt;a href="#%e6%96%b9%e6%b3%95%e4%b8%89%e4%bd%bf%e7%94%a8-hfd" class="header-anchor">&lt;/a>方法三：使用 hfd
+&lt;/h2>&lt;p>&lt;em>&lt;strong>*&lt;a class="link" href="https://gist.github.com/padeoe/697678ab8e528b85a2a7bddafea1fa4f" target="_blank" rel="noopener"
+>hfd&lt;/a>*&lt;/strong>&lt;/em> 是本站开发的 huggingface 专用下载工具，基于成熟工具 &lt;code>aria2&lt;/code>，可以做到稳定高速下载不断线。&lt;/p>
+&lt;p>&lt;strong>1. 下载hfd&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">wget https://hf-mirror.com/hfd/hfd.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">chmod a+x hfd.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>2. 设置环境变量&lt;/strong>
+&lt;strong>Linux&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">HF_ENDPOINT&lt;/span>&lt;span class="o">=&lt;/span>https://hf-mirror.com
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>Windows Powershell&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$env&lt;/span>:HF_ENDPOINT &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;https://hf-mirror.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="31-下载模型-1">&lt;a href="#31-%e4%b8%8b%e8%bd%bd%e6%a8%a1%e5%9e%8b-1" class="header-anchor">&lt;/a>&lt;strong>3.1 下载模型&lt;/strong>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">./hfd.sh gpt2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="32-下载数据集-1">&lt;a href="#32-%e4%b8%8b%e8%bd%bd%e6%95%b0%e6%8d%ae%e9%9b%86-1" class="header-anchor">&lt;/a>&lt;strong>3.2 下载数据集&lt;/strong>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">./hfd.sh wikitext --dataset
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="方法四使用环境变量非侵入式">&lt;a href="#%e6%96%b9%e6%b3%95%e5%9b%9b%e4%bd%bf%e7%94%a8%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e9%9d%9e%e4%be%b5%e5%85%a5%e5%bc%8f" class="header-anchor">&lt;/a>方法四：使用环境变量（非侵入式）
+&lt;/h2>&lt;p>非侵入式，能解决大部分情况。huggingface 工具链会获取&lt;code>HF_ENDPOINT&lt;/code>环境变量来确定下载文件所用的网址，所以可以使用通过设置变量来解决。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">HF_ENDPOINT&lt;/span>&lt;span class="o">=&lt;/span>https://hf-mirror.com python your_script.py
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>不过有些数据集有内置的下载脚本，那就需要手动改一下脚本内的地址来实现了。&lt;/p>
+&lt;h2 id="常见问题">&lt;a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-anchor">&lt;/a>常见问题
+&lt;/h2>&lt;p>&lt;strong>Q&lt;/strong>: 有些项目需要登录，如何下载？&lt;/p>
+&lt;p>&lt;strong>A&lt;/strong>：部分 Gated Repo 需登录申请许可。为保障账号安全，本站不支持登录，需先前往 Hugging Face 官网登录、申请许可，在&lt;a class="link" href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener"
+>官网这里获取 Access Token&lt;/a> 后回镜像站用命令行下载。
+部分工具下载 Gated Repo 的方法：&lt;/p>
+&lt;p>&lt;strong>huggingface-cli： 添加&lt;code>--token&lt;/code>参数&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">huggingface-cli download --token hf_*** --resume-download meta-llama/Llama-2-7b-hf --local-dir Llama-2-7b-hf
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>hfd： 添加&lt;code>--hf_username``--hf_token&lt;/code>参数&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">hfd meta-llama/Llama-2-7b --hf_username YOUR_HF_USERNAME --hf_token hf_***
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>其余如&lt;code>from_pretrained&lt;/code>、&lt;code>wget&lt;/code>、&lt;code>curl&lt;/code>如何设置认证 token，详见上面第一段提到的教程。&lt;/p></description></item></channel></rss>
