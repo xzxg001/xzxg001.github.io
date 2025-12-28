@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pages on xzxg001</title><link>https://xzxg001.github.io/page/</link><description>Recent content in Pages on xzxg001</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 01 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xzxg001.github.io/page/index.xml" rel="self" type="application/rss+xml"/><item><title>About</title><link>https://xzxg001.github.io/about/</link><pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/about/</guid><description>&lt;h2 id="个人简介"&gt;&lt;a href="#%e4%b8%aa%e4%ba%ba%e7%ae%80%e4%bb%8b" class="header-anchor"&gt;&lt;/a&gt;个人简介
+&lt;/h2&gt;&lt;p&gt;研究方向: 多模态融合、Search Agent&lt;/p&gt;
+&lt;h2 id="教育经历"&gt;&lt;a href="#%e6%95%99%e8%82%b2%e7%bb%8f%e5%8e%86" class="header-anchor"&gt;&lt;/a&gt;教育经历
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;湖南大学，信息科学与工程学院，计算机科学与技术（拔尖班），2022-2026&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="科研成果"&gt;&lt;a href="#%e7%a7%91%e7%a0%94%e6%88%90%e6%9e%9c" class="header-anchor"&gt;&lt;/a&gt;科研成果
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ECG-I2S: a method for extracting heartbeat cycle and numerical signals from ECG captured images&lt;/strong&gt;&lt;br&gt;
+&lt;a class="link" href="https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40990-x" target="_blank" rel="noopener"
+&gt;Frontiers of Computer Science (CCF B)&lt;/a&gt;&lt;br&gt;
+共同第一作者，提出了一种从心电图图像中提取心跳周期和数值信号的方法，为医疗图像数据的高效利用提供了新思路。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Multivariate Time-Series Representation Learning for Continuous Medical Diagnosis&lt;/strong&gt;&lt;br&gt;
+&lt;a class="link" href="https://ieeexplore.ieee.org/document/10947608" target="_blank" rel="noopener"
+&gt;IEEE Conference&lt;/a&gt;&lt;br&gt;
+第二作者，提出了基于多变量时间序列的连续医疗诊断框架，有效解决了电子健康记录中的数据稀疏性和不规则时间间隔问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="技能"&gt;&lt;a href="#%e6%8a%80%e8%83%bd" class="header-anchor"&gt;&lt;/a&gt;技能
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;熟练掌握 C++ 和 Python 编程语言，具备扎实的算法与数据结构基础。&lt;/li&gt;
+&lt;li&gt;熟练使用机器学习框架（如 PyTorch），具备数据分析与建模能力。&lt;/li&gt;
+&lt;li&gt;熟悉医学影像处理与多模态数据融合技术。&lt;/li&gt;
+&lt;li&gt;熟练使用 Git 和 GitHub，具备良好的代码管理和协作能力。&lt;/li&gt;
+&lt;li&gt;熟练掌握 LaTeX 和 Drawio 等工具，能够高效完成技术文档撰写和架构图设计。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="联系方式"&gt;&lt;a href="#%e8%81%94%e7%b3%bb%e6%96%b9%e5%bc%8f" class="header-anchor"&gt;&lt;/a&gt;联系方式
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Email: &lt;a class="link" href="mailto:zoulinzhuang2204@hnu.edu.cn" &gt;zoulinzhuang2204@hnu.edu.cn&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;GitHub: &lt;a class="link" href="https://github.com/xzxg001" target="_blank" rel="noopener"
+&gt;https://github.com/xzxg001&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Archives</title><link>https://xzxg001.github.io/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/archives/</guid><description/></item><item><title>Links</title><link>https://xzxg001.github.io/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/links/</guid><description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
+&lt;p&gt;This page&amp;rsquo;s frontmatter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;links&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub is the world&amp;#39;s largest software development platform.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://www.typescriptlang.org&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ts-logo-128.jpg&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;image&lt;/code&gt; field accepts both local and external images.&lt;/p&gt;</description></item><item><title>Search</title><link>https://xzxg001.github.io/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://xzxg001.github.io/search/</guid><description/></item></channel></rss>
